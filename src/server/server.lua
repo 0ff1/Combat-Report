@@ -18,7 +18,7 @@ function Server:registerListeners()
 
     ---@param matchmakingId string Matchmaking identifier.
     AddEventHandler("ws-combatreport:server:matchmakingEnd", function(matchmakingId)
-        self.repository:matchmakingStarted(matchmakingId)
+        self.repository:matchmakingEnd(matchmakingId)
     end)
 
     ---@param matchmakingId string Matchmaking identifier.
