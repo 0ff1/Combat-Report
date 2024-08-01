@@ -3,6 +3,8 @@ local Repository = lib.class("Repository")
 
 Repository.games = {}
 
+---@param matchmakingId string Matchmaking identifier.
+---@param data table Table containing matchmaking information.
 function Repository:matchmakingStarted(matchmakingId, data)
     self.games[matchmakingId] = lib.table.deepclone(data)
 
@@ -13,6 +15,7 @@ function Repository:matchmakingStarted(matchmakingId, data)
     end
 end
 
+---@param matchmakingId string Matchmaking identifier.
 function Repository:matchmakingEnd(matchmakingId)
     for _, players in pairs(self.games[matchmakingId].players.data) do
         for _, v in pairs(players) do
@@ -23,6 +26,7 @@ function Repository:matchmakingEnd(matchmakingId)
     self.games[matchmakingId] = data
 end
 
+---@param matchmakingId string Matchmaking identifier.
 function Repository:roundStarted(matchmakingId)
     self.games[matchmakingId].rounds.current = self.games[matchmakingId].rounds.current + 1
 
@@ -33,10 +37,14 @@ function Repository:roundStarted(matchmakingId)
     end
 end
 
+---@param matchmakingId string Matchmaking identifier.
+---@return table
 function Repository:getMatchmakingData(matchmakingId)
     return lib.table.deepclone(self.games[matchmakingId])
 end
 
+---@param matchmakingId string Matchmaking identifier.
+---@return boolean
 function Repository:matchmakingExist(matchmakingId)
     if self.games[matchmakingId] then
         return true
@@ -45,6 +53,9 @@ function Repository:matchmakingExist(matchmakingId)
     return false
 end
 
+---@param matchmakingId string Matchmaking identifier.
+---@param src number Player source.
+---@return table
 function Repository:getPlayerBySrc(matchmakingId, src)
     if not Repository:matchmakingExist(matchmakingId) then
         return false
@@ -63,6 +74,9 @@ function Repository:getPlayerBySrc(matchmakingId, src)
     end
 end
 
+---@param matchmakingId string Matchmaking identifier.
+---@param ped number Player ped.
+---@return table
 function Repository:getPlayerByPed(matchmakingId, ped)
     if not Repository:matchmakingExist(matchmakingId) then
         return false
@@ -81,6 +95,8 @@ function Repository:getPlayerByPed(matchmakingId, ped)
     end
 end
 
+---@param currentRound table Table containing current round data.
+---@param src number Player source.
 function Repository:verifyCurrentRoundPlayerStruct(currentRound, src)
     if currentRound[src] == nil then
         currentRound[src] = {
@@ -90,6 +106,11 @@ function Repository:verifyCurrentRoundPlayerStruct(currentRound, src)
     end
 end
 
+---@param victim table Table containing victim informations.
+---@param attacker table Table containing attacker informations.
+---@param data table Table containing damage informations.
+---@param currentRoundData table Table containing current round data.
+---@return table
 function Repository:recordInputDamage(victim, attacker, data, currentRoundData)
     self:verifyCurrentRoundPlayerStruct(currentRoundData, victim.src)
 
@@ -112,6 +133,11 @@ function Repository:recordInputDamage(victim, attacker, data, currentRoundData)
     return inputData
 end
 
+---@param victim table Table containing victim informations.
+---@param attacker table Table containing attacker informations.
+---@param data table Table containing damage informations.
+---@param currentRoundData table Table containing current round data.
+---@return table
 function Repository:recordOutputDamage(victim, attacker, data, currentRoundData)
     self:verifyCurrentRoundPlayerStruct(currentRoundData, attacker.src)
 
@@ -134,6 +160,9 @@ function Repository:recordOutputDamage(victim, attacker, data, currentRoundData)
     return outputData
 end
 
+---@param victim table Table containing victim informations.
+---@param attacker table Table containing attacker informations.
+---@param data table Table containing damage informations.
 function Repository:recordDamage(victim, attacker, data)
     local matchmakingRounds = self.games[data.matchmakingId].rounds
     local currentRoundData = matchmakingRounds.data[matchmakingRounds.current]

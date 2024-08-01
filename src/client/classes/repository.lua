@@ -17,6 +17,7 @@ function Repository:resetData()
 end
 
 function Repository:registerListeners()
+    ---@param matchmakingId string Matchmaking identifier.
     RegisterNetEvent("ws-combatreport:client:matchmakingStarted", function(matchmakingId)
         self:resetData()
 
@@ -33,10 +34,12 @@ function Repository:registerListeners()
         self:resetData()
     end)
 
+    ---@param data table Table containing input damage informations.
     RegisterNetEvent("ws-combatreport:client:setInput", function(data)
         self.input = data
     end)
 
+    ---@param data table Table containing output damage informations.
     RegisterNetEvent("ws-combatreport:client:setOutput", function(data)
         self.output = data
     end)
